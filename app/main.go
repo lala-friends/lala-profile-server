@@ -12,6 +12,10 @@ func main()  {
 		fmt.Fprintln(writer, "welcom!")
 	})
 
+	http.HandleFunc("/about", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Fprintln(writer, "about")
+	})
+
 	// 3000 포트로 웹서버 구동
 	http.ListenAndServe(":3000", nil)
 }

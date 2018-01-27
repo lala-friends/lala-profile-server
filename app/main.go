@@ -3,19 +3,38 @@ package main
 import (
 	"fmt"
 	"net/http"
+
 )
 
-func main()  {
-	// "/" 경로로 접속했을 때 처리할 핸들러 함수 지정
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		// "welcom!" 문자열을 화면에 출력
-		fmt.Fprintln(writer, "welcom!")
+func main() {
+
+
+	r := &router{make(map[string]map[string]http.HandlerFunc)}
+
+	r.HandleFunc("GET", "/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "welcom!")
 	})
 
-	http.HandleFunc("/about", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprintln(writer, "about")
+	r.HandleFunc("GET", "/about", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "about")
+	})
+
+	r.HandleFunc("GET", "/users/:id", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "retrieve user")
+	})
+
+	r.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "retrieve user`s address")
+	})
+
+	r.HandleFunc("POST", "/users", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "create user")
+	})
+
+	r.HandleFunc("POST", "/users/:user_id/address", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "create user`s address")
 	})
 
 	// 3000 포트로 웹서버 구동
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":38001", r)
 }

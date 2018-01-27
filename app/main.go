@@ -9,32 +9,32 @@ import (
 func main() {
 
 
-	r := &router{make(map[string]map[string]http.HandlerFunc)}
+	r := &router{make(map[string]map[string]HandlerFunc)}
 
-	r.HandleFunc("GET", "/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "welcom!")
+	r.HandleFunc("GET", "/", func(c *Context) {
+		fmt.Fprintln(c.ResponseWriter, "welcome!")
 	})
 
-	r.HandleFunc("GET", "/about", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "about")
+	r.HandleFunc("GET", "/about", func(c *Context) {
+		fmt.Fprintln(c.ResponseWriter, "about")
 	})
 
-	r.HandleFunc("GET", "/users/:id", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "retrieve user")
+	r.HandleFunc("GET", "/users/:id", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "retrieve user %v\n", c.Params["id"])
 	})
 
-	r.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "retrieve user`s address")
+	r.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "retrieve user %v's address %v\n", c.Params["user_id"], c.Params["address_id"])
 	})
 
-	r.HandleFunc("POST", "/users", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "create user")
+	r.HandleFunc("POST", "/users", func(c *Context){
+		fmt.Fprintln(c.ResponseWriter, "create user")
 	})
 
-	r.HandleFunc("POST", "/users/:user_id/address", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "create user`s address")
+	r.HandleFunc("POST", "/users/:user_id/addresses", func(c *Context){
+		fmt.Fprintf(c.ResponseWriter, "create user %v's address\n", c.Params["user_id"])
 	})
 
-	// 3000 포트로 웹서버 구동
+	// 83001 포트로 웹서버 구동
 	http.ListenAndServe(":38001", r)
 }

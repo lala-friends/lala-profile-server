@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"time"
+	"log"
 )
 
 func main() {
@@ -12,11 +14,15 @@ func main() {
 	r := &router{make(map[string]map[string]HandlerFunc)}
 
 	r.HandleFunc("GET", "/", func(c *Context) {
+		t := time.Now()
 		fmt.Fprintln(c.ResponseWriter, "welcome!")
+		log.Printf("[%s] %q %v \n", c.Request.Method, c.Request.URL.String(), time.Now().Sub(t))
 	})
 
 	r.HandleFunc("GET", "/about", func(c *Context) {
+		t := time.Now()
 		fmt.Fprintln(c.ResponseWriter, "about")
+		log.Printf("[%s] %q %v \n", c.Request.Method, c.Request.URL.String(), time.Now().Sub(t))
 	})
 
 	r.HandleFunc("GET", "/users/:id", func(c *Context) {

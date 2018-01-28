@@ -2,45 +2,39 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 )
 
 func main() {
+	// 서버 생성
+	s := NewServer()
 
-	r := &router{make(map[string]map[string]HandlerFunc)}
+	s.HandleFunc("GET", "/", func(c *Context) {
+		fmt.Fprintln(c.ResponseWriter, "welcom!")
+	})
 
-	r.HandleFunc("GET", "/", logHandler(func(c *Context) {
-		fmt.Fprintln(c.ResponseWriter, "welcome!")
-
-	}))
-
-	r.HandleFunc("GET", "/about", func(c *Context) {
+	s.HandleFunc("GET", "/about", func(c *Context) {
 		fmt.Fprintln(c.ResponseWriter, "about")
 	})
 
-	r.HandleFunc("GET", "/public/index.html", staticHandler(func(c *Context) {
-
-	}))
-
-	r.HandleFunc("GET", "/users/:id", logHandler(recoverHandler(func(c *Context) {
+	s.HandleFunc("GET", "/users/:id", func(c *Context) {
 		if c.Params["id"] == "0" {
 			panic("id is zero")
 		}
 		fmt.Fprintf(c.ResponseWriter, "retrieve user %v\n", c.Params["id"])
-	})))
-
-	r.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
-		fmt.Fprintf(c.ResponseWriter, "retrieve user %v's address %v\n", c.Params["user_id"], c.Params["address_id"])
 	})
 
-	r.HandleFunc("POST", "/users", logHandler(recoverHandler(parseFormHandler(parseJsonBodyHandler(func(c *Context) {
+	s.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "retrieve user %v's adddress %v\n", c.Params["user_id"], c.Params["address_id"])
+	})
+
+	s.HandleFunc("POST", "/users", func(c *Context) {
 		fmt.Fprintln(c.ResponseWriter, c.Params)
-	})))))
-
-	r.HandleFunc("POST", "/users/:user_id/addresses", func(c *Context) {
-		fmt.Fprintf(c.ResponseWriter, "create user %v's address\n", c.Params["user_id"])
 	})
 
-	// 38001 포트로 웹서버 구동
-	http.ListenAndServe(":38001", r)
+	s.HandleFunc("POST", "/users/:user_id/addresses", func(c *Context) {
+		fmt.Println(c.ResponseWriter, c.Params)
+	})
+
+	// 웹서버 구동
+	s.Run(":38001")
 }

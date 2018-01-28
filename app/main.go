@@ -18,6 +18,10 @@ func main() {
 		fmt.Fprintln(c.ResponseWriter, "about")
 	})
 
+	r.HandleFunc("GET", "/public/index.html", staticHandler(func(c *Context) {
+
+	}))
+
 	r.HandleFunc("GET", "/users/:id", logHandler(recoverHandler(func(c *Context) {
 		if c.Params["id"] == "0" {
 			panic("id is zero")
@@ -37,6 +41,6 @@ func main() {
 		fmt.Fprintf(c.ResponseWriter, "create user %v's address\n", c.Params["user_id"])
 	})
 
-	// 83001 포트로 웹서버 구동
+	// 38001 포트로 웹서버 구동
 	http.ListenAndServe(":38001", r)
 }

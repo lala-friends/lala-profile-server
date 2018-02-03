@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"encoding/json"
 	"encoding/xml"
+	"html/template"
+	"path/filepath"
 )
 
 type Context struct {
@@ -52,4 +54,20 @@ func (c *Context) RenderErr(code int, err error) {
 			http.Error(c.ResponseWriter, http.StatusText(defaultErr), defaultErr)
 		}
 	}
+}
+
+// templates: 템플릿 객체를 보관하기 위한 map
+var templates = map[string]*template.Template{}
+
+func (c *Context) RenderTemplate(path string, v interface{}) {
+	// path 에 해당하는 템플릿이 있는지 확인
+	t, ok := templates[path]
+	if !ok {
+		// path 에 해당하는 템플릿 객체가 없으면 템플릿 객체 생성
+		t = template.Must(template.ParseFiles(filepath.Join(".", path)))
+		templates[path] = t
+	}
+
+	// v 값을 템플릿 내부로 전달하여 만들어진 최종 결과를 c.ResponseWriter 에 출력
+	t.Execute(c.ResponseWriter, v)
 }

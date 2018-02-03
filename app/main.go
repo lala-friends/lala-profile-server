@@ -11,7 +11,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"time"
+	//"time"
 )
 
 type User struct {
@@ -60,8 +60,8 @@ func main() {
 	//s.Use(AuthHandler)
 
 	s.HandleFunc("GET", "/", func(c *Context) {
-		//fmt.Fprintln(c.ResponseWriter, "welcom!")
-		c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
+		fmt.Fprintln(c.ResponseWriter, "welcom!")
+		//c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
 	})
 
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {

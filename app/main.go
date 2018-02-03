@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	//"time"
 	"strings"
 	"net/http"
 	"crypto/hmac"
@@ -12,6 +11,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"time"
 )
 
 type User struct {
@@ -59,11 +59,11 @@ func main() {
 
 	//s.Use(AuthHandler)
 
-	//s.HandleFunc("GET", "/", func(c *Context) {
-	//	//fmt.Fprintln(c.ResponseWriter, "welcom!")
-	//	c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
-	//})
-//
+	s.HandleFunc("GET", "/", func(c *Context) {
+		//fmt.Fprintln(c.ResponseWriter, "welcom!")
+		c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
+	})
+
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
 		var id int
 		rows, err := db.Query("SELECT ID FROM PERSON WHERE NAME = ?", c.Params["username"].(string))

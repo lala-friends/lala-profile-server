@@ -38,31 +38,31 @@ func main() {
 	// 서버 생성
 	s := NewServer()
 
-	s.HandleFunc("GET", "/login", func(c *Context) {
-		// "login.html" 렌더링
-		c.RenderTemplate("/public/login.html", map[string]interface{}{"message": "로그인이 필요합니다"})
-	})
+	//s.HandleFunc("GET", "/login", func(c *Context) {
+	//	// "login.html" 렌더링
+	//	c.RenderTemplate("/public/login.html", map[string]interface{}{"message": "로그인이 필요합니다"})
+	//})
 
-	s.HandleFunc("POST", "/login", func(c *Context) {
-		// 로그인 정보를 확인하여 쿠키에 인증 토큰 값 기록
-		if CheckLogin(c.Params["username"].(string), c.Params["password"].(string)) {
-			http.SetCookie(c.ResponseWriter, &http.Cookie{
-				Name:  "X_AUTH",
-				Value: Sign(VerifyMessage),
-				Path:  "/",
-			})
-			c.Redirect("/")
-		}
-		// id 와 password 가 맞지 않으면 다시 "/login" 페이지 렌더링
-		c.RenderTemplate("/public/login.html", map[string]interface{}{"message": "id 또는 password 가 일치하지 않습니다"})
-	})
+	//s.HandleFunc("POST", "/login", func(c *Context) {
+	//	// 로그인 정보를 확인하여 쿠키에 인증 토큰 값 기록
+	//	if CheckLogin(c.Params["username"].(string), c.Params["password"].(string)) {
+	//		http.SetCookie(c.ResponseWriter, &http.Cookie{
+	//			Name:  "X_AUTH",
+	//			Value: Sign(VerifyMessage),
+	//			Path:  "/",
+	//		})
+	//		c.Redirect("/")
+	//	}
+	//	// id 와 password 가 맞지 않으면 다시 "/login" 페이지 렌더링
+	//	c.RenderTemplate("/public/login.html", map[string]interface{}{"message": "id 또는 password 가 일치하지 않습니다"})
+	//})
 
-	s.Use(AuthHandler)
+	//s.Use(AuthHandler)
 
-	s.HandleFunc("GET", "/", func(c *Context) {
-		//fmt.Fprintln(c.ResponseWriter, "welcom!")
-		c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
-	})
+	//s.HandleFunc("GET", "/", func(c *Context) {
+	//	//fmt.Fprintln(c.ResponseWriter, "welcom!")
+	//	c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
+	//})
 
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
 		var id int

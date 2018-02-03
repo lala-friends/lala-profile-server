@@ -63,7 +63,7 @@ func main() {
 	//	//fmt.Fprintln(c.ResponseWriter, "welcom!")
 	//	c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
 	//})
-
+//
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
 		var id int
 		rows, err := db.Query("SELECT ID FROM PERSON WHERE NAME = ?", c.Params["username"].(string))

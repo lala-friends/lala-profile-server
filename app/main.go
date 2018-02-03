@@ -9,6 +9,9 @@ import (
 	"crypto/sha256"
 	"io"
 	"encoding/hex"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"log"
 )
 
 type User struct {
@@ -16,7 +19,22 @@ type User struct {
 	AddressId string
 }
 
+type Person struct {
+	Name          string `json:"name"`
+	Email         string `json:"email"`
+	ThumbnailPath string `json:"thumbnailPath"`
+	Thumbnail     string `json:"thumbnail"`
+	Interest      string `json:"interest"`
+}
+
 func main() {
+	// db 접속
+	db, err := sql.Open("mysql", "ryan:fkdldjs@tcp(52.79.98.34:3306)/lala_profile")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
 	// 서버 생성
 	s := NewServer()
 
@@ -46,8 +64,33 @@ func main() {
 		c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
 	})
 
-	s.HandleFunc("GET", "/about", func(c *Context) {
-		fmt.Fprintln(c.ResponseWriter, "about")
+	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
+		var id int
+		rows, err := db.Query("SELECT ID FROM PERSON WHERE NAME = ?", c.Params["username"].(string))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		if rows.Next() {
+			err := rows.Scan(&id)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		var name, email, thumbnailPath, thumbnail, interest string
+		err = db.QueryRow("SELECT NAME, EMAIL, THUMBNAIL_PATH, THUMBNAIL, INTEREST FROM PERSON WHERE ID = ?", id).Scan(&name, &email, &thumbnailPath, &thumbnail, &interest)
+		if err != nil {
+			log.Fatal(err)
+		}
+		p := Person{name, email, thumbnailPath, thumbnail, interest}
+		c.RenderJson(p)
+	})
+
+	s.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
+		u := User{c.Params["user_id"].(string), c.Params["address_id"].(string)}
+		c.RenderJson(u)
 	})
 
 	//s.HandleFunc("GET", "/users/:id", func(c *Context) {
@@ -72,11 +115,6 @@ func main() {
 	s.HandleFunc("GET", "/users/:id", func(c *Context) {
 		u := User{Id: c.Params["id"].(string)}
 		c.RenderXml(u)
-	})
-
-	s.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
-		u := User{c.Params["user_id"].(string), c.Params["address_id"].(string)}
-		c.RenderJson(u)
 	})
 
 	// 웹서버 구동

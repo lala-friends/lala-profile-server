@@ -35,6 +35,8 @@ func (c *Context) RenderXml(v interface{}) {
 	c.ResponseWriter.WriteHeader(http.StatusOK)
 	// content-type 을 application/xml 으로 지정
 	c.ResponseWriter.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
+
 
 	// v 값을 xml 으로 출력
 	if err := xml.NewEncoder(c.ResponseWriter).Encode(v); err != nil {

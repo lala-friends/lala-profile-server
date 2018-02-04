@@ -108,7 +108,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			pjt := domain.Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
+			pjt := Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
 			c.RenderJson(pjt)
 		}
 	})

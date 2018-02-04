@@ -20,19 +20,6 @@ type User struct {
 	AddressId string
 }
 
-type Person struct {
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Introduce string `json:"introduce"`
-	ImageUrl  string `json:"imageUrl"`
-	RepColor  string `json:"repColor"`
-	Blog      string `json:"blog"`
-	Github    string `json:"github"`
-	Facebook  string `json:"facebook"`
-}
-
-
-
 func main() {
 	// db 접속
 	db, err := sql.Open("mysql", "ryan:fkdldjs@tcp(52.79.98.34:3306)/lala_profile")
@@ -71,19 +58,7 @@ func main() {
 	})
 
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
-		var id int
-		rows, err := db.Query("SELECT ID FROM PERSON WHERE NAME = ?", c.Params["username"].(string))
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer rows.Close()
-
-		if rows.Next() {
-			err := rows.Scan(&id)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+		id := getUserId(db, c.Params["username"].(string))
 
 		var name, email, introduce, imageUrl, repColor, blog, github, facebook string
 		err = db.QueryRow(
@@ -91,7 +66,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		p := Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
+		p := domain.Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
 		c.RenderJson(p)
 	})
 
@@ -105,7 +80,7 @@ func main() {
 
 		for rows.Next() {
 			var projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite string
-			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, & projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
+			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -113,7 +88,6 @@ func main() {
 			c.RenderJson(pjt)
 		}
 	})
-
 
 	s.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
 		u := User{c.Params["user_id"].(string), c.Params["address_id"].(string)}

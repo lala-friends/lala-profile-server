@@ -22,6 +22,8 @@ func (c *Context) RenderJson(v interface{})  {
 	c.ResponseWriter.WriteHeader(http.StatusOK)
 	// Content-type 을 application/json 으로 지정
 	c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
+	c.ResponseWriter.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	c.ResponseWriter.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	// v 값을 json 으로 출력

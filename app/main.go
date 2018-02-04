@@ -13,6 +13,7 @@ import (
 	"log"
 	//"time"
 	"goframework/app/domain"
+	"goframework/app/util"
 )
 
 type User struct {
@@ -58,11 +59,10 @@ func main() {
 	})
 
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
-		id := getUserId(db, c.Params["username"].(string))
-
+		id := util.GetUserId(db, c.Params["username"].(string))
 		var name, email, introduce, imageUrl, repColor, blog, github, facebook string
 		err = db.QueryRow(
-			"SELECT NAME, EMAIL, INTORUDUCE, IMAGE_URL, REP_COLOR	 ,BLOG, GITHUB, FACEBOOK FROM PERSON WHERE ID = ?", id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
+			util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -71,8 +71,8 @@ func main() {
 	})
 
 	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
-		id := getUserId(db, c.Params["username"].(string))
-		rows, err := db.Query("SELECT PROJECT_NAME, PERIOD, PERSONAL_ROLE, MAIN_OPERATOR, PROJECT_SUMMARY, RESPONSIBILITIES, USED_TECHNOLOGY, PRIMARY_ROLE, PROJECT_RESULT, LINKED_SITE FROM PROJECT WHERE PERSON_ID = ?", id)
+		id := util.GetUserId(db, c.Params["username"].(string))
+		rows, err := db.Query(util.SELECT_PROJECTS, id)
 		if err != nil {
 			log.Fatal(err)
 		}

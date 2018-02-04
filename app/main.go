@@ -60,6 +60,7 @@ func main() {
 
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
 		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 		id := util.GetUserId(db, c.Params["username"].(string))
 		var name, email, introduce, imageUrl, repColor, blog, github, facebook string

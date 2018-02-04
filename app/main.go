@@ -12,7 +12,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	//"time"
-	"goframework/app/domain"
 )
 
 type User struct {

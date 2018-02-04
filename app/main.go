@@ -12,6 +12,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	//"time"
+	"goframework/app/domain"
 )
 
 type User struct {
@@ -108,7 +109,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			pjt := Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
+			pjt := domain.Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
 			c.RenderJson(pjt)
 		}
 	})

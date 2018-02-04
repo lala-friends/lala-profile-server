@@ -1,4 +1,4 @@
-package domain
+package main
 
 type Project struct {
 	//PersonId         int    `json:"personId"`

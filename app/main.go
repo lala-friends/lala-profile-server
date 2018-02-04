@@ -12,6 +12,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	//"time"
+	"goframework/app/domain"
 )
 
 type User struct {
@@ -20,12 +21,17 @@ type User struct {
 }
 
 type Person struct {
-	Name          string `json:"name"`
-	Email         string `json:"email"`
-	ThumbnailPath string `json:"thumbnailPath"`
-	Thumbnail     string `json:"thumbnail"`
-	Interest      string `json:"interest"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Introduce string `json:"introduce"`
+	ImageUrl  string `json:"imageUrl"`
+	RepColor  string `json:"repColor"`
+	Blog      string `json:"blog"`
+	Github    string `json:"github"`
+	Facebook  string `json:"facebook"`
 }
+
+
 
 func main() {
 	// db 접속
@@ -79,14 +85,35 @@ func main() {
 			}
 		}
 
-		var name, email, thumbnailPath, thumbnail, interest string
-		err = db.QueryRow("SELECT NAME, EMAIL, THUMBNAIL_PATH, THUMBNAIL, INTEREST FROM PERSON WHERE ID = ?", id).Scan(&name, &email, &thumbnailPath, &thumbnail, &interest)
+		var name, email, introduce, imageUrl, repColor, blog, github, facebook string
+		err = db.QueryRow(
+			"SELECT NAME, EMAIL, INTORUDUCE, IMAGE_URL, REP_COLOR	 ,BLOG, GITHUB, FACEBOOK FROM PERSON WHERE ID = ?", id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
 		if err != nil {
 			log.Fatal(err)
 		}
-		p := Person{name, email, thumbnailPath, thumbnail, interest}
+		p := Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
 		c.RenderJson(p)
 	})
+
+	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
+		id := getUserId(db, c.Params["username"].(string))
+		rows, err := db.Query("SELECT PROJECT_NAME, PERIOD, PERSONAL_ROLE, MAIN_OPERATOR, PROJECT_SUMMARY, RESPONSIBILITIES, USED_TECHNOLOGY, PRIMARY_ROLE, PROJECT_RESULT, LINKED_SITE FROM PROJECT WHERE PERSON_ID = ?", id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite string
+			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, & projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pjt := domain.Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
+			c.RenderJson(pjt)
+		}
+	})
+
 
 	s.HandleFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
 		u := User{c.Params["user_id"].(string), c.Params["address_id"].(string)}

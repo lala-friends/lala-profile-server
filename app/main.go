@@ -58,6 +58,31 @@ func main() {
 		//c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
 	})
 
+	s.HandleFunc("GET", "/developers", func(c *Context) {
+		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+		rows, err := db.Query(util.SELECT_PERSON_ALL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		persons := make([]domain.Person, 2)
+		i := 0
+		for rows.Next() {
+			var name, email, introduce, imageUrl, repColor, blog, github, facebook string
+			err := rows.Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
+			if err != nil {
+				log.Fatal(err)
+			}
+			p := domain.Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
+			persons[i] = p
+			i++
+		}
+		c.RenderJson(persons)
+	})
+
 	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
 		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")

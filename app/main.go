@@ -96,10 +96,10 @@ func main() {
 					techString = tech.String
 				}
 				techs := strings.Split(techString, "\n")
-				product := domain.Product{productId, productName, productIntroduce, techs, productImageUrl}
+				product := domain.Product{productId, productName, productIntroduce.String, techs, productImageUrl.String}
 				products = append(products, product)
 			}
-			p := domain.PersonProduct{personId, name, email, introduce, imageUrl, repColor, blog, github, facebook, products}
+			p := domain.PersonProduct{personId, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String, products}
 			persons = append(persons, p)
 		}
 		c.RenderJson(persons)
@@ -119,7 +119,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		p := domain.Person{id, name, email, introduce, imageUrl, repColor, blog, github, facebook}
+		p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
 		c.RenderJson(p)
 	})
 
@@ -146,7 +146,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			pjt := domain.Project{projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite}
+			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnology.String, primaryRole.String, projectResult.String, linkedSite.String}
 			c.RenderJson(pjt)
 		}
 	})

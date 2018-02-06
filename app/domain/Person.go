@@ -1,15 +1,13 @@
 package domain
 
-import "database/sql"
-
 type Person struct {
-	PersonId  int            `json:"personId"`
-	Name      string         `json:"name"`
-	Email     sql.NullString `json:"email"`
-	Introduce sql.NullString `json:"introduce"`
-	ImageUrl  sql.NullString `json:"imageUrl"`
-	RepColor  sql.NullString `json:"repColor"`
-	Blog      sql.NullString `json:"blog"`
-	Github    sql.NullString `json:"github"`
-	Facebook  sql.NullString `json:"facebook"`
+	PersonId  int    `json:"personId"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Introduce string `json:"introduce"`
+	ImageUrl  string `json:"imageUrl"`
+	RepColor  string `json:"repColor"`
+	Blog      string `json:"blog"`
+	Github    string `json:"github"`
+	Facebook  string `json:"facebook"`
 }

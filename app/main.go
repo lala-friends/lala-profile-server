@@ -68,22 +68,37 @@ func main() {
 		}
 		defer rows.Close()
 
-		persons := make([]domain.Person, 2)
-		i := 0
+		persons := make([]domain.PersonProduct, 0)
 		for rows.Next() {
+			var personId int
 			var name, email, introduce, imageUrl, repColor, blog, github, facebook string
-			err := rows.Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
+			err := rows.Scan(&personId, &name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
 			if err != nil {
 				log.Fatal(err)
 			}
-			p := domain.Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
-			persons[i] = p
-			i++
+			productRows, err := db.Query(util.SELECT_PRODUCT_BY_PERSON, personId)
+			if err != nil {
+				log.Fatal(err)
+			}
+			products := make([]domain.Product, 0)
+			for productRows.Next() {
+				var productId int
+				var productName, productIntroduce, tech string
+				productErr := productRows.Scan(&productId, &productName, &productIntroduce, &tech)
+				if productErr != nil {
+					log.Fatal(productErr)
+				}
+				techs := strings.Split(tech, "\n")
+				product := domain.Product{productId, productName, productIntroduce, techs}
+				products = append(products, product)
+			}
+			p := domain.PersonProduct{personId, name, email, introduce, imageUrl, repColor, blog, github, facebook, products}
+			persons = append(persons, p)
 		}
 		c.RenderJson(persons)
 	})
 
-	s.HandleFunc("GET", "/profile/:username", func(c *Context) {
+	s.HandleFunc("GET", "/developer/:username", func(c *Context) {
 		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
@@ -94,7 +109,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		p := domain.Person{name, email, introduce, imageUrl, repColor, blog, github, facebook}
+		p := domain.Person{id, name, email, introduce, imageUrl, repColor, blog, github, facebook}
 		c.RenderJson(p)
 	})
 

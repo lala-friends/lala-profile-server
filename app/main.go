@@ -54,10 +54,11 @@ func main() {
 	//s.Use(AuthHandler)
 
 	s.HandleFunc("GET", "/", func(c *Context) {
-		fmt.Fprintln(c.ResponseWriter, "welcom!")
+		fmt.Fprintln(c.ResponseWriter, "welcom to lala-profile!")
 		//c.RenderTemplate("/public/index.html", map[string]interface{}{"time": time.Now()})
 	})
 
+	// 개발자 전체조회 + 프로덕트
 	s.HandleFunc("GET", "/developers", func(c *Context) {
 		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -71,7 +72,8 @@ func main() {
 		persons := make([]domain.PersonProduct, 0)
 		for rows.Next() {
 			var personId int
-			var name, email, introduce, imageUrl, repColor, blog, github, facebook string
+			var name string
+			var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
 			err := rows.Scan(&personId, &name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
 			if err != nil {
 				log.Fatal(err)
@@ -83,13 +85,18 @@ func main() {
 			products := make([]domain.Product, 0)
 			for productRows.Next() {
 				var productId int
-				var productName, productIntroduce, tech string
-				productErr := productRows.Scan(&productId, &productName, &productIntroduce, &tech)
+				var productName string
+				var productIntroduce, tech, productImageUrl sql.NullString
+				productErr := productRows.Scan(&productId, &productName, &productIntroduce, &tech, &productImageUrl)
 				if productErr != nil {
 					log.Fatal(productErr)
 				}
-				techs := strings.Split(tech, "\n")
-				product := domain.Product{productId, productName, productIntroduce, techs}
+				var techString string
+				if tech.Valid {
+					techString = tech.String
+				}
+				techs := strings.Split(techString, "\n")
+				product := domain.Product{productId, productName, productIntroduce, techs, productImageUrl}
 				products = append(products, product)
 			}
 			p := domain.PersonProduct{personId, name, email, introduce, imageUrl, repColor, blog, github, facebook, products}
@@ -98,12 +105,15 @@ func main() {
 		c.RenderJson(persons)
 	})
 
+
+	// 개발자 개안정보 조회
 	s.HandleFunc("GET", "/developer/:username", func(c *Context) {
 		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 		id := util.GetUserId(db, c.Params["username"].(string))
-		var name, email, introduce, imageUrl, repColor, blog, github, facebook string
+		var name string
+		var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
 		err = db.QueryRow(
 			util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
 		if err != nil {
@@ -112,6 +122,14 @@ func main() {
 		p := domain.Person{id, name, email, introduce, imageUrl, repColor, blog, github, facebook}
 		c.RenderJson(p)
 	})
+
+	// 프로덕트 전체조회 + 개발자
+	s.HandleFunc("GET", "/products", func(c *Context) {
+		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+	})
+
+	///////////////////////////////////// PROJECT ///////////////////////////////////////////
 
 	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
 		id := util.GetUserId(db, c.Params["username"].(string))
@@ -122,7 +140,8 @@ func main() {
 		defer rows.Close()
 
 		for rows.Next() {
-			var projectName, period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite string
+			var projectName string
+			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
 			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
 			if err != nil {
 				log.Fatal(err)

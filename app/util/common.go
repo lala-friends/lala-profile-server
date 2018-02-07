@@ -8,7 +8,7 @@ import (
 const CERT_FILE_PATH_LOCAL  = "/Users/ryan/go/src/goframework/app/server.pem"
 const KEY_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.key"
 const CERT_FILE_PATH_SERVER  = "/home/muzi/goprojects/conf/server.pem"
-const KEY_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/app/server.key"
+const KEY_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/server.key"
 
 func GetUserId(db *sql.DB, username string) int {
 	var id int

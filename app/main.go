@@ -60,7 +60,7 @@ func main() {
 
 	// 개발자 전체조회 + 프로덕트
 	s.HandleFunc("GET", "/developers", func(c *Context) {
-		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 		rows, err := db.Query(util.SELECT_PERSON_ALL)
@@ -108,7 +108,7 @@ func main() {
 
 	// 개발자 개안정보 조회
 	s.HandleFunc("GET", "/developer/:username", func(c *Context) {
-		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
 		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 		id := util.GetUserId(db, c.Params["username"].(string))

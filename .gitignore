@@ -29,6 +29,10 @@ reated by https://www.gitignore.io/api/go,intellij
 .idea/vcs.xml
 .idea/workspace.xml
 
+# For cert
+server.key
+server.pem
+
 # Sensitive or high-churn files:
 .idea/**/dataSources/
 .idea/**/dataSources.ids

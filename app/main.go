@@ -125,8 +125,44 @@ func main() {
 
 	// 프로덕트 전체조회 + 개발자
 	s.HandleFunc("GET", "/products", func(c *Context) {
-		c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+		c.SetDefaultHeader()
+
+		productRows, err := db.Query(util.SELECT_PRODUCT_ALL)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer productRows.Close()
+
+		productPersons := make([]domain.ProductPerson, 0)
+		for productRows.Next() {
+			var productId int
+			var productName string
+			var productIntroduce, productTech, productImageUrl sql.NullString
+			err := productRows.Scan(&productId, &productName, &productIntroduce, &productTech, &productImageUrl)
+			if err != nil {
+				log.Fatal(err)
+			}
+			personRows, err := db.Query(util.SELECT_PERSON_BY_PRODUCT, productId)
+			if err != nil {
+				log.Fatal(err)
+			}
+			persons := make([]domain.Person, 0)
+			for personRows.Next() {
+				var personId int
+				var personName string
+				var personEmail, personIntroduce, personImageUrl, personRepColor, personBlog, personGitHub, personFacebook sql.NullString
+				personoErr := personRows.Scan(&personId, &personName, &personEmail, &personIntroduce, &personImageUrl, &personRepColor, &personBlog, &personGitHub, &personFacebook)
+				if personoErr != nil {
+					log.Fatal(personoErr)
+				}
+				person := domain.Person{personId, personName, personEmail.String, personIntroduce.String, personImageUrl.String, personRepColor.String, personBlog.String, personGitHub.String, personFacebook.String}
+				persons = append(persons, person)
+			}
+			techs := strings.Split(productTech.String, "\n")
+			productPerson := domain.ProductPerson{productId, productName, productIntroduce.String, techs, productImageUrl.String, persons}
+			productPersons = append(productPersons, productPerson)
+		}
+		c.RenderJson(productPersons)
 	})
 
 	///////////////////////////////////// PROJECT ///////////////////////////////////////////

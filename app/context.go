@@ -21,10 +21,7 @@ func (c *Context) RenderJson(v interface{})  {
 	// http status 를 status ok 로 지정
 	c.ResponseWriter.WriteHeader(http.StatusOK)
 	// Content-type 을 application/json 으로 지정
-	//c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	//c.ResponseWriter.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	//c.ResponseWriter.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-	//c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
+	c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	// v 값을 json 으로 출력
 	if err := json.NewEncoder(c.ResponseWriter).Encode(v); err != nil {
@@ -78,4 +75,9 @@ func (c *Context) RenderTemplate(path string, v interface{}) {
 // 리다이렉트
 func (c *Context) Redirect(url string)  {
 	http.Redirect(c.ResponseWriter, c.Request, url, http.StatusMovedPermanently)
+}
+
+func (c *Context) SetDefaultHeader() {
+	c.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")
+	c.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 }

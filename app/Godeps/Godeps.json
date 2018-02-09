@@ -1,0 +1,12 @@
+{
+	"ImportPath": "goframework/app",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3-54-gbc14601",
+			"Rev": "bc14601d1bd56421dd60f561e6052c9ed77f9daf"
+		}
+	]
+}

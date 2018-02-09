@@ -1,6 +1,6 @@
 {
 	"ImportPath": "goframework/app",
-	"GoVersion": "go1.6",
+	"GoVersion": "go1.9",
 	"GodepVersion": "v80",
 	"Deps": [
 		{

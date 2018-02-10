@@ -151,12 +151,12 @@ func main() {
 		for commentRows.Next() {
 			var commentId int
 			var commentParentId sql.NullInt64
-			var commentEmail, commentRegDt, commentModDt string
+			var commentEmail string
 			var commentMessage sql.NullString
 			commentErr := commentRows.Scan(
-				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId, &commentRegDt, &commentModDt)
+				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId)
 			util.HandleSqlErr(commentErr)
-			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId, commentRegDt, commentModDt}
+			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId}
 			comments = append(comments, comment)
 		}
 		techs := strings.Split(productTech.String, "\n")
@@ -182,10 +182,12 @@ func main() {
 	})
 	///////////////////////////////////// PROJECT ///////////////////////////////////////////
 
-	s.HandleFunc("GET", "/developer/:username/projects", func(c *Context) {
+	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
 		id := util.GetUserId(db, c.Params["username"].(string))
 		rows, err := db.Query(util.SELECT_PROJECTS, id)
-		util.HandleSqlErr(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 		defer rows.Close()
 
 		for rows.Next() {

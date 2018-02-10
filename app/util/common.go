@@ -1,7 +1,9 @@
 package util
 
 import (
+	//"log"
 	"database/sql"
+	"log"
 )
 
 const CERT_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.pem"
@@ -29,10 +31,10 @@ func GetProductId(db *sql.DB, productName string) int {
 	}
 }
 
-//func HandleSqlErr(err error) {
-//	if err != nil && err == sql.ErrNoRows {
-//		return
-//	} else {
-//		log.Fatal(err)
-//	}
-//}
+func HandleSqlErr(err error) {
+	if err != nil && err == sql.ErrNoRows {
+		return
+	} else {
+		log.Fatal(err)
+	}
+}

@@ -12,16 +12,29 @@ const CERT_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/server.pem"
 const KEY_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/server.key"
 
 func GetUserId(db *sql.DB, username string) int {
-	var id int
-	rows, err := db.Query("SELECT ID FROM PERSON WHERE NAME = ?", username)
-	if err != nil {
-		log.Fatal(err)
+	id := 0
+	err := db.QueryRow(SELECT_PERSON_ID_BY_PERSON_NAME, username).Scan(&id)
+	if err != nil && err == sql.ErrNoRows {
+		return 0
+	} else {
+		return id
 	}
-	defer rows.Close()
-		err := rows.Scan(&id)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return id
 }
+
+func GetProductId(db *sql.DB, productName string) int {
+	id := 0
+	err := db.QueryRow(SELECT_PRODUCT_BY_PRODUCT_NAME, productName).Scan(&id)
+	if err != nil && err == sql.ErrNoRows {
+		return 0
+	} else {
+		return id
+	}
+}
+
+//func HandleSqlErr(err error) {
+//	if err != nil && err == sql.ErrNoRows {
+//		return
+//	} else {
+//		log.Fatal(err)
+//	}
+//}

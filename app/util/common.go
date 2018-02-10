@@ -5,9 +5,9 @@ import (
 	"database/sql"
 )
 
-const CERT_FILE_PATH_LOCAL  = "/Users/ryan/go/src/goframework/app/server.pem"
+const CERT_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.pem"
 const KEY_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.key"
-const CERT_FILE_PATH_SERVER  = "/home/muzi/goprojects/conf/server.pem"
+const CERT_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/server.pem"
 const KEY_FILE_PATH_SERVER = "/home/muzi/goprojects/conf/server.key"
 
 func GetUserId(db *sql.DB, username string) int {
@@ -20,7 +20,7 @@ func GetUserId(db *sql.DB, username string) int {
 func GetProductId(db *sql.DB, productName string) int {
 	rows, err := db.Query(SELECT_PRODUCT_BY_PRODUCT_NAME, productName)
 	HandleSqlErr(err)
-	defer  rows.Close()
+	defer rows.Close()
 	return GetIdFromRows(rows)
 }
 
@@ -36,7 +36,9 @@ func GetIdFromRows(rows *sql.Rows) int {
 }
 
 func HandleSqlErr(err error) {
-	if err != nil {
+	if err != nil && err == sql.ErrNoRows {
+		return
+	} else {
 		log.Fatal(err)
 	}
 }

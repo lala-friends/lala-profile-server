@@ -175,9 +175,8 @@ func main() {
 		var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
 		err = db.QueryRow(
 			util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
+
 		p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
 		c.RenderJson(p)
 	})

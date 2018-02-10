@@ -33,8 +33,8 @@ func (s *Server) Run(addr string) {
 	}
 
 	// 웹서버 시작
-	//if err := http.ListenAndServe(addr, s); err != nil {
-	if err := http.ListenAndServeTLS(addr, util.CERT_FILE_PATH_SERVER, util.KEY_FILE_PATH_SERVER, s); err != nil {
+	if err := http.ListenAndServe(addr, s); err != nil {
+	//if err := http.ListenAndServeTLS(addr, util.CERT_FILE_PATH_SERVER, util.KEY_FILE_PATH_SERVER, s); err != nil {
 		panic(err)
 	}
 }

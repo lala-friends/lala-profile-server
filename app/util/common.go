@@ -29,6 +29,6 @@ func HandleSqlErr(err error) int {
 		return 0
 	} else {
 		log.Fatal(err)
-		return 0
+		return -1
 	}
 }

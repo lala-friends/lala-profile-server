@@ -151,12 +151,12 @@ func main() {
 		for commentRows.Next() {
 			var commentId int
 			var commentParentId sql.NullInt64
-			var commentEmail, commentRegDt, commentModDt string
+			var commentEmail string
 			var commentMessage sql.NullString
 			commentErr := commentRows.Scan(
-				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId, &commentRegDt, &commentModDt)
+				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId)
 			util.HandleSqlErr(commentErr)
-			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId, commentRegDt, commentModDt}
+			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId}
 			comments = append(comments, comment)
 		}
 		techs := strings.Split(productTech.String, "\n")
@@ -175,20 +175,17 @@ func main() {
 		var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
 		err = db.QueryRow(
 			util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
+
 		p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
 		c.RenderJson(p)
 	})
 	///////////////////////////////////// PROJECT ///////////////////////////////////////////
 
-	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
+	s.HandleFunc("GET", "/developer/:username/projects", func(c *Context) {
 		id := util.GetUserId(db, c.Params["username"].(string))
 		rows, err := db.Query(util.SELECT_PROJECTS, id)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
 		defer rows.Close()
 
 		for rows.Next() {

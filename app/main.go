@@ -182,12 +182,10 @@ func main() {
 	})
 	///////////////////////////////////// PROJECT ///////////////////////////////////////////
 
-	s.HandleFunc("GET", "/profile/:username/projects", func(c *Context) {
+	s.HandleFunc("GET", "/developer/:username/projects", func(c *Context) {
 		id := util.GetUserId(db, c.Params["username"].(string))
 		rows, err := db.Query(util.SELECT_PROJECTS, id)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
 		defer rows.Close()
 
 		for rows.Next() {

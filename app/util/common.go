@@ -34,6 +34,6 @@ func HandleSqlErr(err error) {
 	if err != nil && err == sql.ErrNoRows {
 		return
 	} else {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }

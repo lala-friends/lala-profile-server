@@ -336,4 +336,4 @@ func Sign(message string) string {
 	mac := hmac.New(sha256.New, secretKey)
 	io.WriteString(mac, message)
 	return hex.EncodeToString(mac.Sum(nil))
-
+}

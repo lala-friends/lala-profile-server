@@ -151,12 +151,12 @@ func main() {
 		for commentRows.Next() {
 			var commentId int
 			var commentParentId sql.NullInt64
-			var commentEmail, commentRegDt, commentModDt string
+			var commentEmail string
 			var commentMessage sql.NullString
 			commentErr := commentRows.Scan(
-				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId, &commentRegDt, &commentModDt)
+				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId)
 			util.HandleSqlErr(commentErr)
-			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId, commentRegDt, commentModDt}
+			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId}
 			comments = append(comments, comment)
 		}
 		techs := strings.Split(productTech.String, "\n")

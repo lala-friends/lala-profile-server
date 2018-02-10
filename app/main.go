@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
+	_"github.com/go-sql-driver/mysql"
 	"log"
 	//"time"
 	"goframework/app/domain"

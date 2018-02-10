@@ -3,7 +3,6 @@ package util
 import (
 	//"log"
 	"database/sql"
-	"log"
 )
 
 const CERT_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.pem"

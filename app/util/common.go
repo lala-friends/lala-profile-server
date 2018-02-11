@@ -31,9 +31,7 @@ func GetProductId(db *sql.DB, productName string) int {
 }
 
 func HandleSqlErr(err error) {
-	if err != nil && err == sql.ErrNoRows {
-		return
-	} else {
-		log.Println(err)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
 	}
 }

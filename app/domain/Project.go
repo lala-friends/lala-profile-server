@@ -8,7 +8,7 @@ type Project struct {
 	MainOperator     string `json:"mainOperator"`
 	ProjectSummary   string `json:"projectSummary"`
 	Responsibilities string `json:"responsibilities"`
-	UsedTechnology   string `json:"usedTechnology"`
+	UsedTechnology   []string `json:"usedTechnology"`
 	PrimaryRole      string `json:"primaryRole"`
 	ProjectResult    string `json:"projectResult"`
 	LinkedSite       string `json:"linkedSite"`

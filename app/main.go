@@ -186,7 +186,8 @@ func main() {
 			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
 			projectErr := projectRows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
 			util.HandleSqlErr(projectErr)
-			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnology.String, primaryRole.String, projectResult.String, linkedSite.String}
+			usedTechnologies := strings.Split(usedTechnology.String, "\n")
+			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnologies, primaryRole.String, projectResult.String, linkedSite.String}
 			projects = append(projects, pjt)
 		}
 
@@ -228,7 +229,8 @@ func main() {
 			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
 			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
 			util.HandleSqlErr(err)
-			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnology.String, primaryRole.String, projectResult.String, linkedSite.String}
+			usedTechnologies := strings.Split(usedTechnology.String, "\n")
+			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnologies, primaryRole.String, projectResult.String, linkedSite.String}
 			c.RenderJson(pjt)
 		}
 	})

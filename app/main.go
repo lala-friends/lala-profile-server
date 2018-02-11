@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"strings"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
-	//"time"
 	"goframework/app/domain"
 	"goframework/app/util"
+	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -183,11 +182,12 @@ func main() {
 		projects := make([]domain.Project, 0)
 		for projectRows.Next() {
 			var projectName string
-			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
-			projectErr := projectRows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
-			util.HandleSqlErr(projectErr)
-			usedTechnologies := strings.Split(usedTechnology.String, "\n")
-			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnologies, primaryRole.String, projectResult.String, linkedSite.String}
+			var periodFrom, periodTo mysql.NullTime
+			var projectIntroduce, projectDescription, projectTechs, personalRole, projectLink sql.NullString
+			err := projectRows.Scan(&projectName, &periodFrom, &periodTo, &projectIntroduce, &projectDescription, &projectTechs, &personalRole, &projectLink)
+			util.HandleSqlErr(err)
+			projectTechsArr := strings.Split(projectTechs.String, "\n")
+			pjt := domain.Project{projectName, periodFrom.Time, periodTo.Time, projectIntroduce.String, projectDescription.String, projectTechsArr, personalRole.String, projectLink.String}
 			projects = append(projects, pjt)
 		}
 
@@ -226,11 +226,12 @@ func main() {
 
 		for rows.Next() {
 			var projectName string
-			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
-			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
+			var periodFrom, periodTo mysql.NullTime
+			var projectIntroduce, projectDescription, projectTechs, personalRole, projectLink sql.NullString
+			err := rows.Scan(&projectName, &periodFrom, &periodTo, &projectIntroduce, &projectDescription, &projectTechs, &personalRole, &projectLink)
 			util.HandleSqlErr(err)
-			usedTechnologies := strings.Split(usedTechnology.String, "\n")
-			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnologies, primaryRole.String, projectResult.String, linkedSite.String}
+			projectTechsArr := strings.Split(projectTechs.String, "\n")
+			pjt := domain.Project{projectName, periodFrom.Time, periodTo.Time, projectIntroduce.String, projectDescription.String, projectTechsArr, personalRole.String, projectLink.String}
 			c.RenderJson(pjt)
 		}
 	})

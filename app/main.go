@@ -152,22 +152,22 @@ func main() {
 
 
 	// 개발자 개안정보 조회
-	s.HandleFunc("GET", "/developer/:username", func(c *Context) {
-		c.SetDefaultHeader()
-
-		id := util.GetUserId(db, c.Params["username"].(string))
-		var name string
-		var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
-		err = db.QueryRow(
-			util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
-		util.HandleSqlErr(err)
-
-		p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
-		c.RenderJson(p)
-	})
+	//s.HandleFunc("GET", "/developer/:username", func(c *Context) {
+	//	c.SetDefaultHeader()
+	//
+	//	id := util.GetUserId(db, c.Params["username"].(string))
+	//	var name string
+	//	var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
+	//	err = db.QueryRow(
+	//		util.SELECT_PERSON, id).Scan(&name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
+	//	util.HandleSqlErr(err)
+	//
+	//	p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
+	//	c.RenderJson(p)
+	//})
 
 	// 개발자 개안정보 조회 + Projects, Products
-	s.HandleFunc("GET", "/developerDetail/:username", func(c *Context) {
+	s.HandleFunc("GET", "/developer/:username", func(c *Context) {
 		c.SetDefaultHeader()
 
 		personId := util.GetUserId(db, c.Params["username"].(string))

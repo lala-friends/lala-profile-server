@@ -34,9 +34,7 @@ func main() {
 		c.SetDefaultHeader()
 
 		rows, err := db.Query(util.SELECT_PERSON_ALL)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
 		defer rows.Close()
 
 		persons := make([]domain.PersonProduct, 0)
@@ -45,22 +43,16 @@ func main() {
 			var name string
 			var email, introduce, imageUrl, repColor, blog, github, facebook sql.NullString
 			err := rows.Scan(&personId, &name, &email, &introduce, &imageUrl, &repColor, &blog, &github, &facebook)
-			if err != nil {
-				log.Fatal(err)
-			}
+			util.HandleSqlErr(err)
 			productRows, err := db.Query(util.SELECT_PRODUCT_BY_PERSON, personId)
-			if err != nil {
-				log.Fatal(err)
-			}
+			util.HandleSqlErr(err)
 			products := make([]domain.Product, 0)
 			for productRows.Next() {
 				var productId int
 				var productName string
 				var productIntroduce, tech, productImageUrl sql.NullString
 				productErr := productRows.Scan(&productId, &productName, &productIntroduce, &tech, &productImageUrl)
-				if productErr != nil {
-					log.Fatal(productErr)
-				}
+				util.HandleSqlErr(productErr)
 				var techString string
 				if tech.Valid {
 					techString = tech.String
@@ -80,9 +72,7 @@ func main() {
 		c.SetDefaultHeader()
 
 		productRows, err := db.Query(util.SELECT_PRODUCT_ALL)
-		if err != nil {
-			log.Fatal(err)
-		}
+		util.HandleSqlErr(err)
 		defer productRows.Close()
 
 		productPersons := make([]domain.ProductPerson, 0)
@@ -95,18 +85,14 @@ func main() {
 				log.Fatal(err)
 			}
 			personRows, err := db.Query(util.SELECT_PERSON_BY_PRODUCT, productId)
-			if err != nil {
-				log.Fatal(err)
-			}
+			util.HandleSqlErr(err)
 			persons := make([]domain.Person, 0)
 			for personRows.Next() {
 				var personId int
 				var personName string
 				var personEmail, personIntroduce, personImageUrl, personRepColor, personBlog, personGitHub, personFacebook sql.NullString
-				personoErr := personRows.Scan(&personId, &personName, &personEmail, &personIntroduce, &personImageUrl, &personRepColor, &personBlog, &personGitHub, &personFacebook)
-				if personoErr != nil {
-					log.Fatal(personoErr)
-				}
+				personErr := personRows.Scan(&personId, &personName, &personEmail, &personIntroduce, &personImageUrl, &personRepColor, &personBlog, &personGitHub, &personFacebook)
+				util.HandleSqlErr(personErr)
 				person := domain.Person{personId, personName, personEmail.String, personIntroduce.String, personImageUrl.String, personRepColor.String, personBlog.String, personGitHub.String, personFacebook.String}
 				persons = append(persons, person)
 			}
@@ -145,10 +131,8 @@ func main() {
 
 		// comment append
 		commentRows, commentRowsErr := db.Query(util.SELECT_COMMENT_BY_PRODUCT_ID, productId);
+		util.HandleSqlErr(commentRowsErr)
 		comments := make([]domain.Comment, 0)
-		println(commentRows)
-		println(comments)
-		println(commentRowsErr)
 		for commentRows.Next() {
 			var commentId int
 			var commentParentId sql.NullInt64
@@ -156,7 +140,7 @@ func main() {
 			var commentMessage sql.NullString
 			commentErr := commentRows.Scan(
 				&commentId, &commentEmail, &commentMessage, &commentParentId, &productId, &commentRegDt, &commentModDt)
-			println(commentErr)
+			util.HandleSqlErr(commentErr)
 			comment := domain.Comment{commentId, commentEmail, commentMessage.String, commentParentId.Int64, productId, commentRegDt, commentModDt}
 			comments = append(comments, comment)
 		}
@@ -181,6 +165,56 @@ func main() {
 		p := domain.Person{id, name, email.String, introduce.String, imageUrl.String, repColor.String, blog.String, github.String, facebook.String}
 		c.RenderJson(p)
 	})
+
+	// 개발자 개안정보 조회 + Projects, Products
+	s.HandleFunc("GET", "/developerDetail/:username", func(c *Context) {
+		c.SetDefaultHeader()
+
+		personId := util.GetUserId(db, c.Params["username"].(string))
+		var personName string
+		var personEmail, personIntroduce, personImageUrl, personRepColor, personBlog, personGithub, personFacebook sql.NullString
+		personErr := db.QueryRow(util.SELECT_PERSON, personId).Scan(&personName, &personEmail, &personIntroduce, &personImageUrl, &personRepColor, &personBlog, &personGithub, &personFacebook)
+		util.HandleSqlErr(personErr)
+
+		// Project 조회
+		projectRows, err := db.Query(util.SELECT_PROJECTS, personId)
+		util.HandleSqlErr(err)
+		defer projectRows.Close()
+		projects := make([]domain.Project, 0)
+		for projectRows.Next() {
+			var projectName string
+			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
+			projectErr := projectRows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
+			util.HandleSqlErr(projectErr)
+			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnology.String, primaryRole.String, projectResult.String, linkedSite.String}
+			projects = append(projects, pjt)
+		}
+
+		// Product 조회
+		productRows, err := db.Query(util.SELECT_PRODUCT_BY_PERSON, personId)
+		util.HandleSqlErr(err)
+		defer projectRows.Close()
+		products := make([]domain.Product, 0)
+		for productRows.Next() {
+			var productId int
+			var productName string
+			var productIntroduce, tech, productImageUrl sql.NullString
+			productErr := productRows.Scan(&productId, &productName, &productIntroduce, &tech, &productImageUrl)
+			util.HandleSqlErr(productErr)
+			var techString string
+			if tech.Valid {
+				techString = tech.String
+			}
+			techs := strings.Split(techString, "\n")
+			product := domain.Product{productId, productName, productIntroduce.String, techs, productImageUrl.String}
+			products = append(products, product)
+		}
+
+		// 결과 조합
+		person := domain.PersonProductProject{personId, personName, personEmail.String, personIntroduce.String, personImageUrl.String, personRepColor.String, personBlog.String, personGithub.String, personFacebook.String, projects, products}
+		c.RenderJson(person)
+	})
+
 	///////////////////////////////////// PROJECT ///////////////////////////////////////////
 
 	s.HandleFunc("GET", "/developer/:username/projects", func(c *Context) {
@@ -193,9 +227,7 @@ func main() {
 			var projectName string
 			var period, personalRole, mainOperator, projectSummary, responsibilities, usedTechnology, primaryRole, projectResult, linkedSite sql.NullString
 			err := rows.Scan(&projectName, &period, &personalRole, &mainOperator, &projectSummary, &responsibilities, &usedTechnology, &primaryRole, &projectResult, &linkedSite)
-			if err != nil {
-				log.Fatal(err)
-			}
+			util.HandleSqlErr(err)
 			pjt := domain.Project{projectName, period.String, personalRole.String, mainOperator.String, projectSummary.String, responsibilities.String, usedTechnology.String, primaryRole.String, projectResult.String, linkedSite.String}
 			c.RenderJson(pjt)
 		}

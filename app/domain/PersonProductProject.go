@@ -13,5 +13,5 @@ type PersonProductProject struct {
 
 	Projects []Project `json:"projects"`
 
-	Products [] Product `json:"products"`
+	Products [] Product `json:"products"`	// 개발자 누군지는 필요없고 디테일도 필요없음
 }

@@ -80,9 +80,7 @@ func main() {
 			var productName string
 			var productIntroduce, productTech, productImageUrl sql.NullString
 			err := productRows.Scan(&productId, &productName, &productIntroduce, &productTech, &productImageUrl)
-			if err != nil {
-				log.Fatal(err)
-			}
+			util.HandleSqlErr(err)
 			personRows, err := db.Query(util.SELECT_PERSON_BY_PRODUCT, productId)
 			util.HandleSqlErr(err)
 			persons := make([]domain.Person, 0)

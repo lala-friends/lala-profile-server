@@ -11,6 +11,10 @@ import (
 )
 
 func main() {
+
+	// 로그 세팅
+	util.SetLogger()
+
 	// db 접속
 	db, err := sql.Open("mysql", "ryan:fkdldjs@tcp(52.79.98.34:3306)/lala_profile")
 	if err != nil {

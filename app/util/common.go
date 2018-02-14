@@ -68,6 +68,6 @@ func SetLogger() {
 	// 표준로거를 파일로그로 변경
 	log.SetOutput(fpLog)
 
-	// 어플리케이션 시작 로그를 남김
+	// 어플리케이션 시작 로그를 남김 확인
 	log.Println("lala-profile-server start!! " + time.Now().Local().Format("2006-01-02"))
 }

@@ -58,7 +58,6 @@ func SetLogger() {
 	LOG_PATH = GOPATH + "/log/"
 	logDate := time.Now().Local().Format("2006-01-02")
 	LOG_FILE = LOG_PATH + APPLICATION_NAME + "_" + logDate
-	fmt.Println(LOG_FILE)
 	fpLog, err := os.OpenFile(LOG_FILE, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)

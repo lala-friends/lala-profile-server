@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 	"time"
-	"fmt"
 )
 
 var GOPATH = ""

@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"strings"
 	"database/sql"
-	"log"
 	"goframework/app/domain"
 	"goframework/app/util"
 	"github.com/go-sql-driver/mysql"
+	"goframework/app/persistent"
+)
+
+var (
+	db *sql.DB	// db var
+	s *Server	// server var
 )
 
 func main() {
 
 	// 로그 세팅
 	util.SetLogger()
-
 	// db 접속
-	db, err := sql.Open("mysql", "ryan:fkdldjs@tcp(52.79.98.34:3306)/lala_profile")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+	db := persistent.GetConnection(util.DRIVER_NAME, util.DB_ADDRESS, util.DB_NAME, util.DB_USER, util.DB_PASSWORD)
 
 	// 서버 생성
 	s := NewServer()
@@ -112,7 +112,7 @@ func main() {
 		productId := util.GetProductId(db, c.Params["productName"].(string))
 		var productName string
 		var productIntroduce, productTech, productRepColor, productImageUrl sql.NullString
-		err = db.QueryRow(util.SELECT_PRODUCT_BY_PRODUCT_ID, productId).Scan(
+		err := db.QueryRow(util.SELECT_PRODUCT_BY_PRODUCT_ID, productId).Scan(
 			&productId, &productName, &productIntroduce, &productTech, &productRepColor, &productImageUrl)
 		println(err)
 		// detail append

@@ -14,6 +14,11 @@ var LOG_FILE = ""
 
 const APPLICATION_NAME = "lala-profile-server"
 const CONST_GOPATH = "GOPATH"
+const DRIVER_NAME = "mysql"
+const DB_USER = "ryan"
+const DB_PASSWORD = "fkdldjs"
+const DB_ADDRESS = "52.79.98.34:3306"
+const DB_NAME = "lala_profile"
 
 const CERT_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.pem"
 const KEY_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.key"
@@ -61,7 +66,7 @@ func SetLogger() {
 	if err != nil {
 		panic(err)
 	}
-	defer fpLog.Close()
+	//defer fpLog.Close()
 
 	// 표준로거를 파일로그로 변경
 	log.SetOutput(fpLog)

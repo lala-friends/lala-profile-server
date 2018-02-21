@@ -1,10 +1,9 @@
-package main
+package cmm
 
 import (
 	"time"
 	"log"
 	"net/http"
-	"fmt"
 	"encoding/json"
 	"strings"
 	"path"
@@ -40,7 +39,6 @@ func recoverHandler(next HandlerFunc) HandlerFunc {
 func parseFormHandler(next HandlerFunc) HandlerFunc {
 	return func(c *Context) {
 		c.Request.ParseForm()
-		fmt.Println(c.Request.PostForm)
 		for k, v := range c.Request.PostForm {
 			if len(v) > 0 {
 				c.Params[k] = v[0]

@@ -32,3 +32,5 @@ const SELECT_PERSON_BY_PRODUCT =
 			"FROM MAP_PERSON_PRODUCT mpp "+
 			"WHERE mpp.PRODUCT_ID = ? ) innerMpp "+
  		 "WHERE psn.ID = innerMpp.mppPersonId"
+const INSERT_PRODUCT = "INSERT INTO PRODUCT (NAME, INTRODUCE, TECH, REP_COLOR, IMAGE_URL, REG_DT, MOD_DT) VALUES (?, ?, ?, ?, ?, sysdate(), sysdate())"
+const INSERT_PRODUCT_DETAIL = "INSERT INTO PRODUCT_DETAIL (TITLE, DESCRIPTION, IMAGE_URL, PRODUCT_ID, REG_DT, MOD_DT) VALUES (?, ?, ?, ?, sysdate(), sysdate())"

@@ -6,8 +6,56 @@ import (
 	"goframework/app/util"
 	"goframework/app/domain"
 	"strings"
+	"log"
+	"strconv"
 )
 
+/**
+	프로덕트, 프로덕트 디테 인서트
+ */
+func HandleAddProductAndProductDetail(s *cmm.Server, db *sql.DB)  {
+	s.HandleFunc("POST", "/products", func(c *cmm.Context) {
+		c.SetDefaultHeader()
+
+		// tech 정보 가져오기
+		techs := c.Params["techs"].([]interface{})
+		techsStrArr := make([]string, len(techs))
+		for i, v := range techs {
+			techsStrArr[i] = v.(string)
+		}
+		techsStr := strings.Join(techsStrArr, "\n")
+		log.Println(techsStrArr)
+
+		stmt, productErr := db.Prepare(util.INSERT_PRODUCT)
+		util.HandleSqlErr(productErr)
+
+		// product 저장
+		productRes, productErr := stmt.Exec(c.Params["name"].(string), c.Params["introduce"].(string),
+			techsStr, c.Params["repColor"].(string), c.Params["imageUrl"].(string))
+		util.HandleSqlErr(productErr)
+		productLastId, productErr := productRes.LastInsertId()
+
+		// product detail 저장
+		productDetailList := c.Params["details"].([]interface{})
+		for _, v := range productDetailList {
+			detail := v.(map[string]interface{})
+			stmt, productDetailErr :=db.Prepare(util.INSERT_PRODUCT_DETAIL)
+			util.HandleSqlErr(productDetailErr)
+			productDetailRes, productDetailErr :=
+				stmt.Exec(detail["title"].(string), detail["description"].(string), detail["imageUrl"].(string), productLastId)
+			util.HandleSqlErr(productDetailErr)
+			productDetailLastId, productDetailErr := productDetailRes.LastInsertId()
+			log.Println("ProductId[" +strconv.Itoa(int(productLastId)) +"] DetailId[" +
+				strconv.Itoa(int(productDetailLastId)) + "] is Inserted!!")
+
+		}
+		log.Println("ProductDetail Insert is Finished!!")
+	})
+}
+
+/**
+	프로덕트 전체 조회
+ */
 func HandleGetProducts(s *cmm.Server, db *sql.DB) {
 	s.HandleFunc("GET", "/products", func(c *cmm.Context) {
 		c.SetDefaultHeader()
@@ -43,6 +91,10 @@ func HandleGetProducts(s *cmm.Server, db *sql.DB) {
 	})
 }
 
+
+/**
+	프로덕트 이름으로 단건 조
+ */
 func HandleGetProductByProductName(s *cmm.Server, db *sql.DB) {
 	s.HandleFunc("GET", "/product/:productName", func(c *cmm.Context) {
 		c.SetDefaultHeader()

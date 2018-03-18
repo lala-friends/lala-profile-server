@@ -16,7 +16,7 @@ import (
 func HandleAddProductAndProductDetail(s *cmm.Server, db *sql.DB)  {
 	s.HandleFunc("POST", "/products", func(c *cmm.Context) {
 		c.SetDefaultHeader()
-
+		log.Println("kkk")
 		// tech 정보 가져오기
 		techs := c.Params["techs"].([]interface{})
 		techsStrArr := make([]string, len(techs))

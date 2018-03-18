@@ -32,7 +32,6 @@ jobs:
         command: |
           ssh -o StrictHostKeyChecking=no -i /home/circleci/.ssh/id_rsa ec2-user@ec2-13-125-241-114.ap-northeast-2.compute.amazonaws.com 
           PID=`ps -eaf | grep lala-profile-server | grep -v grep | awk '{print $2}'`
-          if [[ "" !=  "$PID" ]]; then kill -9 $PID fi
-          ./lala-profile-server/lala-profile-server &
+         ./lala-profile-server/lala-profile-server &
 
       

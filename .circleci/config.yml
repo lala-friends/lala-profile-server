@@ -21,7 +21,7 @@ jobs:
     steps:
       - checkout
       - run: 
-        envronment:
+        environment:
           GOPATH: "${HOME}/.go_workspace:/usr/local/go_workspace:${HOME}/.go_project"
         command: go build ./app
 #      - run: ssh -o StrictHostKeyChecking=no -i /home/circleci/.ssh/id_rsa ec2-user@ec2-13-125-241-114.ap-northeast-2.compute.amazonaws.com rm -rf /home/ec2-user/targets/lala-profile-server/app

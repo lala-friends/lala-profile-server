@@ -21,7 +21,11 @@ jobs:
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /home/circleci/goprojects/src/goframework
+
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "66:22:c5:ba:e5:27:d7:85:98:d2:64:0f:de:77:61:9c"
       - checkout
       - run: go get -u github.com/go-sql-driver/mysql
       - run: mkdir ../../bin

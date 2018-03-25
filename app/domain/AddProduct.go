@@ -4,7 +4,7 @@ type AddProduct struct {
 	Name       string   `json:"name"`
 	Introduce  string   `json:"introduce"`
 	Techs      []string `json:"techs"`
-	RepColor   string   `json:"repColor"`
+	Color   string   `json:"color"`
 	ImageUrl   string   `json:"imageUrl"`
 	Developers [] int   `json:"developers"`
 	Details    []Detail `json:"details"`

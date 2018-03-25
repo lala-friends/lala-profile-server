@@ -39,7 +39,7 @@ func HandleAddProductAndProductDetail(s *cmm.Server, db *sql.DB) {
 		}
 		// product 저장
 		productRes, productErr := stmt.Exec(data.Name, data.Introduce,
-			techStr, data.RepColor, data.ImageUrl)
+			techStr, data.Color, data.ImageUrl)
 		util.HandleSqlErr(productErr)
 		productLastId, productErr := productRes.LastInsertId()
 

@@ -8,47 +8,65 @@ import (
 	"strings"
 	"log"
 	"strconv"
+	"encoding/json"
 )
 
 /**
 	프로덕트, 프로덕트 디테 인서트
  */
-func HandleAddProductAndProductDetail(s *cmm.Server, db *sql.DB)  {
+func HandleAddProductAndProductDetail(s *cmm.Server, db *sql.DB) {
 	s.HandleFunc("POST", "/products", func(c *cmm.Context) {
 		c.SetDefaultHeader()
-
-		// tech 정보 가져오기
-		techs := c.Params["techs"].([]interface{})
-		techsStrArr := make([]string, len(techs))
-		for i, v := range techs {
-			techsStrArr[i] = v.(string)
+		inputStr := ""
+		for key, _ := range c.Params {
+			inputStr = key
 		}
-		techsStr := strings.Join(techsStrArr, "\n")
-		log.Println(techsStrArr)
+		data := domain.AddProduct{}
+		inputErr := json.Unmarshal([]byte(inputStr), &data)
+		if inputErr != nil {
+			log.Println(inputErr.Error())
+		}
 
 		stmt, productErr := db.Prepare(util.INSERT_PRODUCT)
 		util.HandleSqlErr(productErr)
-
+		techStr := ""
+		for key, value := range data.Techs {
+			if len(data.Techs)-1 == key {
+				techStr += value
+			} else {
+				techStr += value + " "
+			}
+		}
 		// product 저장
-		productRes, productErr := stmt.Exec(c.Params["name"].(string), c.Params["introduce"].(string),
-			techsStr, c.Params["repColor"].(string), c.Params["imageUrl"].(string))
+		productRes, productErr := stmt.Exec(data.Name, data.Introduce,
+			techStr, data.RepColor, data.ImageUrl)
 		util.HandleSqlErr(productErr)
 		productLastId, productErr := productRes.LastInsertId()
 
 		// product detail 저장
-		productDetailList := c.Params["details"].([]interface{})
+		productDetailList := data.Details
 		for _, v := range productDetailList {
-			detail := v.(map[string]interface{})
-			stmt, productDetailErr :=db.Prepare(util.INSERT_PRODUCT_DETAIL)
+			stmt, productDetailErr := db.Prepare(util.INSERT_PRODUCT_DETAIL)
 			util.HandleSqlErr(productDetailErr)
-			productDetailRes, productDetailErr :=
-				stmt.Exec(detail["title"].(string), detail["description"].(string), detail["imageUrl"].(string), productLastId)
+			productDetailRes, productDetailErr := stmt.Exec(v.Title, v.Description, v.ImageUrl, productLastId)
 			util.HandleSqlErr(productDetailErr)
 			productDetailLastId, productDetailErr := productDetailRes.LastInsertId()
-			log.Println("ProductId[" +strconv.Itoa(int(productLastId)) +"] DetailId[" +
+			log.Println("ProductId[" + strconv.Itoa(int(productLastId)) + "] DetailId[" +
 				strconv.Itoa(int(productDetailLastId)) + "] is Inserted!!")
-
 		}
+
+		// developer 저장
+		developerList := data.Developers
+		for _, v := range developerList {
+			stmt, productPersonMapErr := db.Prepare(util.INSERT_PRODUCT_PERSON_MAP)
+			util.HandleSqlErr(productPersonMapErr)
+			productPersonMapRes, productPersonMapErr := stmt.Exec(productLastId, v)
+			util.HandleSqlErr(productPersonMapErr)
+			productPersonMapLastId, productPersonMapErr := productPersonMapRes.LastInsertId()
+			log.Println("ProductId[" + strconv.Itoa(int(productLastId)) + "] DeveloperId[" +
+				strconv.Itoa(int(productPersonMapLastId)) + "] is Inserted!!")
+		}
+
 		log.Println("ProductDetail Insert is Finished!!")
 	})
 }
@@ -90,7 +108,6 @@ func HandleGetProducts(s *cmm.Server, db *sql.DB) {
 		c.RenderJson(productPersons)
 	})
 }
-
 
 /**
 	프로덕트 이름으로 단건 조

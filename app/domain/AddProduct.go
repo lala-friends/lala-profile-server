@@ -1,17 +1,18 @@
 package domain
 
 type AddProduct struct {
-	name 	  string `json:"name"`
-	introduce string `json:"introduce"`
-	techs 	[]string `json:"techs"`
-	repColor  string `json:"repColor"`
-	imageUrl  string `json:"imageUrl"`
-	details []Detail `json:"details"`
-} 
+	Name       string   `json:"name"`
+	Introduce  string   `json:"introduce"`
+	Techs      []string `json:"techs"`
+	RepColor   string   `json:"repColor"`
+	ImageUrl   string   `json:"imageUrl"`
+	Developers [] int   `json:"developers"`
+	Details    []Detail `json:"details"`
+}
 
 type Detail struct {
-	title 		string `json:"title"`
-	description string `json:"description"`
-	imageUrl 	string `json:"imageUrl"`
-	productId 	int    `json:"productId"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	ImageUrl    string `json:"imageUrl"`
+	ProductId   int    `json:"productId"`
 }

@@ -32,6 +32,25 @@ const SELECT_PERSON_BY_PRODUCT =
 			"FROM PRODUCT_PERSON_MAP mpp "+
 			"WHERE mpp.PRODUCT_ID = ? ) innerMpp "+
  		 "WHERE psn.ID = innerMpp.mppPersonId"
+
+// INSERT
 const INSERT_PRODUCT = "INSERT INTO PRODUCT (NAME, INTRODUCE, TECHS, COLOR, IMAGE_URL, REG_DT, MOD_DT) VALUES (?, ?, ?, ?, ?, sysdate(), sysdate())"
 const INSERT_PRODUCT_DETAIL = "INSERT INTO PRODUCT_DETAIL (TITLE, DESCRIPTION, IMAGE_URL, PRODUCT_ID, REG_DT, MOD_DT) VALUES (?, ?, ?, ?, sysdate(), sysdate())"
 const INSERT_PRODUCT_PERSON_MAP  = "INSERT INTO PRODUCT_PERSON_MAP ( PRODUCT_ID, PERSON_ID, REG_DT, MOD_DT ) VALUES (?, ?, sysdate(), sysdate())"
+
+// SEARCH_LIKE
+const SELECT_DEVELOPERS_LIKE_SEARCH =
+	"SELECT ID " +
+		  ",NAME " +
+		  ",EMAIL " +
+		  ",INTRODUCE " +
+		  ",IMAGE_URL " +
+		  ",COLOR " +
+		  ",BLOG " +
+		  ",GITHUB " +
+		  ",FACEBOOK " +
+		  ",TAGS " +
+	 " FROM lala_profile.PERSON " +
+	" WHERE " +
+	" (NAME  LIKE ?  " +
+	" OR EMAIL LIKE ? )"

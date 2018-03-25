@@ -33,6 +33,9 @@ func main() {
 	// 프로덕트 전체조회 + 개발자
 	handler.HandleGetProducts(s, db)
 
+	// 개발자 like 검색
+	handler.HandleGetDevelopersLikeSearch(s, db)
+
 	/////////////////////////////////////// 개별정보 조회 /////////////////////////
 
 	// product 개별 조회

@@ -9,6 +9,28 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+func HandleGetDevelopersLikeSearch(s *cmm.Server, db *sql.DB)  {
+	s.HandleFunc("GET", "/developers/search/:searchKeyword", func(c *cmm.Context) {
+		c.SetDefaultHeader()
+
+		rows, err := db.Query(util.SELECT_DEVELOPERS_LIKE_SEARCH, "%"+c.Params["searchKeyword"].(string)+"%", "%"+c.Params["searchKeyword"].(string)+"%")
+		util.HandleSqlErr(err)
+		defer rows.Close()
+
+		searchPerson := make([]domain.SearchPerson, 0)
+		for rows.Next() {
+			var id int
+			var name string
+			var email, introduce, imageUrl, color, blog, github, facebook, tags sql.NullString
+			err := rows.Scan(&id, &name, &email, &introduce, &imageUrl, &color, &blog, &github, &facebook, &tags)
+			util.HandleSqlErr(err)
+			p := domain.SearchPerson{id, name, email.String, introduce.String, imageUrl.String, color.String, blog.String, github.String, facebook.String, tags.String}
+			searchPerson = append(searchPerson, p)
+		}
+		c.RenderJson(searchPerson)
+	})
+}
+
 func HandleGetDevelopers(s *cmm.Server, db *sql.DB) {
 	s.HandleFunc("GET", "/developers", func(c *cmm.Context) {
 		c.SetDefaultHeader()

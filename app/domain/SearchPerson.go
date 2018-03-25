@@ -10,4 +10,5 @@ type SearchPerson struct {
 	Blog      string `json:"blog"`
 	Github    string `json:"github"`
 	Facebook  string `json:"facebook"`
+	Tags      string `json:"tags"`
 }

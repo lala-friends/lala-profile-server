@@ -13,6 +13,7 @@ func HandleGetDevelopersLikeSearch(s *cmm.Server, db *sql.DB)  {
 	s.HandleFunc("GET", "/developers/search/:searchKeyword", func(c *cmm.Context) {
 		c.SetDefaultHeader()
 
+
 		rows, err := db.Query(util.SELECT_DEVELOPERS_LIKE_SEARCH, "%"+c.Params["searchKeyword"].(string)+"%", "%"+c.Params["searchKeyword"].(string)+"%")
 		util.HandleSqlErr(err)
 		defer rows.Close()

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"path/filepath"
 )
 
 var GOPATH = ""
@@ -73,4 +74,9 @@ func SetLogger() {
 
 	// 어플리케이션 시작 로그를 남김 확인
 	log.Println("lala-profile-server start!! " + time.Now().Local().Format("2006-01-02"))
+}
+
+func GetProjectAbsPath() string {
+	relPath, _ := filepath.Abs("../../app")
+	return relPath
 }

@@ -18,7 +18,7 @@ const CONST_GOPATH = "GOPATH"
 const DRIVER_NAME = "mysql"
 const DB_USER = "tiffany"
 const DB_PASSWORD = "xlvksl"
-const DB_ADDRESS = "13.125.241.114:3306"
+const DB_ADDRESS = "52.78.179.249:3306"
 const DB_NAME = "lala_profile"
 
 const CERT_FILE_PATH_LOCAL = "/Users/ryan/go/src/goframework/app/server.pem"
